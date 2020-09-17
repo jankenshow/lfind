@@ -14,4 +14,9 @@ $ lfind [path/to/text_file] [OPTION]...
 
 ### Installation
 
-...
+Clone and cd to this repository.
+Then, run commands below.
+```
+$ chmod 775 install.sh
+$ ./install.sh
+```
