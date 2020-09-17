@@ -7,7 +7,7 @@ mv ${SCRIPT_DIR}/lfind ~/.local/bin
 
 echo -n -e "\n" >> ~/.bashrc
 echo "# add local commands to path" >> ~/.bashrc
-echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
+echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
 
 source $HOME/.bashrc
 
