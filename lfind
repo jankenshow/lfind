@@ -1,0 +1,114 @@
+#!/bin/bash
+
+PROGNAME=$(basename $0)
+VERSION="1.0"
+
+declare -i argc=0
+search_directory="."
+output_to="None"
+
+function discription {
+  cat <<EOM
+This command finds multiple filenames in a text file from a given location.
+
+EOM
+}
+
+function usage {
+  cat <<EOM
+Usage: ${PROGNAME} [path/to/text_file] [OPTION]...
+  -h                  Display help.
+  -d [VALUE]          optional - A path/to/directory where to search for given file name. Default is current directory.
+  -o | --out [VALUE]  optional - A file to output the result.
+  -p                  optional - Print file name before search results.
+EOM
+}
+
+
+for OPT in "$@"; do
+  case $OPT in
+    -h | --help)
+      discription
+      usage
+      exit 0
+      ;;
+    --version)
+      echo ${VERSION}
+      exit 0
+      ;;
+    -d )
+      if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+        echo "${PROGNAME}: option requires an argument -- $1" 1>&2
+        exit 1
+      fi
+      search_directory="$2"
+      # echo ${search_directory}
+      shift 2
+      ;;
+    -o | --out )
+      if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+        echo "${PROGNAME}: option requires an argument -- $1" 1>&2
+        exit 1
+      fi
+      output_to="$2"
+      shift 2
+      ;;
+    -p )
+      print_file_name=true
+      shift 1
+      ;;
+    -* )
+      echo "${PROGNAME}: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
+      exit 1
+      ;;
+    * )
+      if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+        ((++argc))
+        param+=( "$1" )
+        shift 1
+      fi
+      ;;
+  esac
+done
+
+
+if [ ${argc} -gt 1 ] || [ ${argc} -eq 0 ]; then
+  echo "${PROGNAME}: One command line argument is required"
+  echo
+  usage
+  exit 1
+fi
+
+
+if [ ! -d "${search_directory}" ]; then
+  echo "${PROGNAME}: No such directory : ${search_directory}"
+  exit 1
+elif [ ! -f "${param}" ]; then
+  echo "${PROGNAME}: No such file : ${param}"
+  exit 1
+fi
+
+
+if [ "${output_to}" != "None" ]; then
+  while read line; do
+    if [ ${print_file_name} ]; then
+      echo "[${line}]" >> ${output_to}
+    fi
+    find "${search_directory}" -name "$line" >> ${output_to}
+    if [ ${print_file_name} ]; then
+      echo "" >> ${output_to}
+    fi
+  done < "${param}"
+else
+  while read line; do
+    if [ ${print_file_name} ]; then
+      echo "[${line}]" 
+    fi
+    find "${search_directory}" -name "${line}"
+    if [ ${print_file_name} ]; then
+      echo ""
+    fi
+  done < "${param}"
+fi
+
+exit 0
