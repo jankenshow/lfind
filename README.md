@@ -12,6 +12,11 @@ $ lfind [path/to/text_file] [OPTION]...
   -p                  optional - Print file name before search results.
 ```
 
+### Environment
+
+・Linux / MacOS
+・bash
+
 ### Installation
 
 Clone and cd to this repository.
